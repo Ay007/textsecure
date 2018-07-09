@@ -1,0 +1,48 @@
+body{
+    background-color: rgb(1, 32, 32);
+}
+#container{
+    width: 400px;
+    margin: auto;
+    margin-top: 200px;
+    background-color: rgb(199, 250, 250)
+}
+#enc{
+    text-align: center;
+    display: inline-block;
+    width: 49%;
+    background-color: aqua;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: rgb(1, 63, 63);
+}
+#dec{
+    text-align: center;
+    float: right;
+    width: 50%;
+    background-color: aqua;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: rgb(1, 63, 63);
+}
+#enc:hover{
+    cursor: pointer;
+    background-color: rgb(3, 179, 179);
+    color: aliceblue;
+}
+#dec:hover{
+    cursor: pointer;
+    background-color: rgb(3, 179, 179);
+    color: aliceblue;
+}
+#Encrypt{
+    margin-left: 39%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+#Decrypt{
+    margin: auto;
+    margin-left: 39%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}

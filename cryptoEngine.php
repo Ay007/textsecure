@@ -9,13 +9,29 @@
     }
     function encrypt($plaintxt, $key){
         $key = evaluateKey($key);
-        $plaintxt = strrev($plaintxt);
         $plaintxt = str_split($plaintxt);
         $length = count($plaintxt);
         for ($i=0; $i < $length; $i++) { 
             $x = ord($plaintxt[$i]);
             $x -= $key;
-            $plaintxt[$i] = chr($x);
+            if ($x < 65) {
+                $v = 65 - $x;
+                $v = mt_rand($v, $v+25);
+                $x += $v;
+                $plaintxt[$i] = chr($x)."0$v";
+            } elseif ($x > 122) {
+                $v = $x - 122;
+                $v = mt_rand($v, $v+25);
+                $x -= $v;
+                $plaintxt[$i] = chr($x)."2$v";
+            } elseif ($x > 90 && $x < 97) {
+                $v = 97 - $x;
+                $v = mt_rand($v, $v+25);
+                $x += $v;
+                $plaintxt[$i] = chr($x)."1$v";
+            } else {
+                $plaintxt[$i] = chr($x);
+            }
         }
         $plaintxt = implode($plaintxt);
         echo $plaintxt;
@@ -23,37 +39,60 @@
 
     function decrypt($cryptotxt, $key){
         $key = evaluateKey($key);
-        $cryptotxt = strrev($cryptotxt);
+        $newMessage = "";
         $cryptotxt = str_split($cryptotxt);
         $length = count($cryptotxt);
         for ($i=0; $i < $length; $i++) { 
-            $x = ord($cryptotxt[$i]);
-            $x += $key;
-            $cryptotxt[$i] = chr($x);
+            if (preg_match("/[a-zA-Z]$/", $cryptotxt[$i])) {
+                $temp = "";
+                for ($j=$i+1; $j < $length; $j++) { 
+                    if (preg_match("/[a-zA-Z]$/", $cryptotxt[$j])) {
+                        break;
+                    }
+                    $temp .= $cryptotxt[$j];
+                }
+                $temp = str_split($temp);
+                $x = ord($cryptotxt[$i]);
+
+                if (!empty($temp)) {
+                    switch ($temp[0]) {
+                        case '0':
+                            array_splice($temp, 0, 1);
+                            $temp = implode($temp);
+                            $x -= $temp;
+                            break;
+                        case '1':
+                            array_splice($temp, 0, 1);
+                            $temp = implode($temp);
+                            $x -= $temp;
+                            break;
+                        case '2':
+                            array_splice($temp, 0, 1);
+                            $temp = implode($temp);
+                            $x += $temp;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                $x += $key;
+                $newMessage .= chr($x);
+            }
         }
-        $cryptotxt = implode($cryptotxt);
-        echo $cryptotxt;
+        echo $newMessage;
     }
 
     function evaluateKey($key){
         $keyVal = 0;
-        if (strlen($key) == 1) {
-            $keyVal += ord($key);
-        } elseif (strlen($key) == 2) {
-            $key = str_split($key);
-            for ($i=0; $i < 2; $i++) { 
-                $key[$i] = ord($key[$i]);
-            }
-            $keyVal += abs($key[0] + (2* $key[0] - $key[1]) - sqrt($key[0] * $key[1]));
-        } else {
-            $key = str_split($key, 2);
-            $length = count($key);
-            for ($i=0; $i < $length; $i++) { 
-                $keyVal += evaluateKey($key[$i]);
-            }
+        $length = strlen($key);
+        str_split($key);
+
+        for ($i=0; $i < $length; $i++) { 
+            $keyVal += ($i + 1) * ord($key[$i]);
         }
+        
         $keyVal = $keyVal * 1.265;
         $keyVal = $keyVal % 8;
-        return $keyVal;
+        return $keyVal+1;
     }
 ?>
