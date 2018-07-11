@@ -16,6 +16,9 @@
             <textarea id="result" readonly placeholder="Output" rows="5" cols="50"></textarea>
         </div>
         <script>
+            var encMessage = "";
+            var decMessage = "";
+
             var msg = document.getElementById("message");
             var key = document.getElementById("key");
             var resLocation = document.getElementById("result");
@@ -35,11 +38,15 @@
             function showEnc() {
                 decBtn.style.display = "none";
                 encBtn.style.display = "inline";
+                decMessage = msg.value;
+                msg.value = encMessage;
             }
 
             function showDec() {
                 encBtn.style.display = "none";
                 decBtn.style.display = "inline";
+                encMessage = msg.value;
+                msg.value = decMessage;
             }
 
             function encryptPlainText() {
@@ -48,8 +55,13 @@
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 xhr.onreadystatechange = function(){
+                    if (xhr.readyState == 1) {
+                        encBtn.style.display = "none";
+
+                    }
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         resLocation.innerHTML = "Encrypted Message: " + xhr.responseText;
+                        encBtn.style.display = "inline";
                     }
                 }
                 xhr.send("message="+encodeURIComponent(msg.value)+"&key="+encodeURIComponent(key.value)+"&enc="+"1");

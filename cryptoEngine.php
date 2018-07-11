@@ -1,4 +1,5 @@
 <?php
+    sleep(2);
     if (isset($_POST['message'], $_POST['key'], $_POST['enc'])) {
         if ($_POST['enc'] == 1) {
             encrypt($_POST['message'], $_POST['key']);
